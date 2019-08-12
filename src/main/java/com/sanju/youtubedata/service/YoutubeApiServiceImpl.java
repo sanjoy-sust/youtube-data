@@ -3,6 +3,10 @@ package com.sanju.youtubedata.service;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
 import com.google.api.services.youtube.model.*;
@@ -29,6 +33,10 @@ public class YoutubeApiServiceImpl implements YoutubeApiService {
     private Environment env;
 
     private static final long NUMBER_OF_VIDEOS_RETURNED = 50;
+
+    public static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+
+    public static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
     private YouTube youtube;
 
@@ -59,7 +67,7 @@ public class YoutubeApiServiceImpl implements YoutubeApiService {
 
         try {
 
-            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
+            youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
                 public void initialize(HttpRequest request) throws IOException {
                 }
             }).setApplicationName("YoutubeVideoInfo")
@@ -115,20 +123,8 @@ public class YoutubeApiServiceImpl implements YoutubeApiService {
         return null;
     }
 
-    /*
-     * Prints out all results in the Iterator. For each result, print the
-     * title, video ID, and thumbnail.
-     *
-     * @param iteratorSearchResults Iterator of SearchResults to print
-     *
-     * @param query Search query (String)
-     */
-    private void extractAndSave(Iterator<SearchResult> iteratorSearchResults, String query) throws IOException {
 
-        System.out.println("\n=============================================================");
-        System.out.println(
-                "   First " + NUMBER_OF_VIDEOS_RETURNED + " videos for search on \"" + query + "\".");
-        System.out.println("=============================================================\n");
+    private void extractAndSave(Iterator<SearchResult> iteratorSearchResults, String query) throws IOException {
 
         if (!iteratorSearchResults.hasNext()) {
             System.out.println(" There aren't any results for your query.");
